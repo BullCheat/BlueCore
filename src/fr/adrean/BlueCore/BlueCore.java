@@ -1,5 +1,11 @@
 package fr.adrean.BlueCore;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 
 import mkremins.fanciful.FancyMessage;
@@ -19,6 +25,8 @@ import org.bukkit.util.Vector;
 public class BlueCore extends JavaPlugin {
 	
 	private static HashMap<String, HashMap<Effect, Integer>> playerEffects = new HashMap<String, HashMap<Effect, Integer>>();
+	public static String serverName;
+	public static HashMap<String, CacheEntry> apiCache = new HashMap<String, CacheEntry>();
 	
 	@Override
 	public void onEnable() {
@@ -26,6 +34,20 @@ public class BlueCore extends JavaPlugin {
 		pm.registerEvents(new RainfallManager(), this);
 		pm.registerEvents(new ChatManager(), this);
 		initEffectPlayer();
+		switch (getServer().getPort()) {
+		case 25600:
+			serverName = "hub";
+			break;
+		case 25700:
+			serverName = "survivor";
+			break;
+		case 25800:
+			serverName = "factions";
+			break;
+
+		default:
+			break;
+		}
 	}
 	
 	private void initEffectPlayer() {
@@ -57,7 +79,7 @@ public class BlueCore extends JavaPlugin {
 
 	public static FancyMessage getFancyName(FancyMessage msg, OfflinePlayer p, Player watcher) {
 		if (msg.latest().hasText()) msg = msg.then();
-		Grade grade = getGrade(p);
+		Grade grade = Grade.get(p);
 		ChatColor color = grade.getChatColor();
 		if (Bukkit.getPluginManager().isPluginEnabled("Factions")) {
 			msg = FactionsHelper.getFancyFactionBeforeName(msg, p, watcher);
@@ -73,21 +95,7 @@ public class BlueCore extends JavaPlugin {
 	}
 	
 	public static String getColorName(OfflinePlayer p) {
-		return getGrade(p).getChatColor() + p.getName();
-	}
-
-	public static Grade getGrade(OfflinePlayer p) {
-		if (p.getName().equalsIgnoreCase("BullCheat")) {
-			return Grade.ADMIN;
-		} else if (p.getName().equalsIgnoreCase("ouroulboulouk")) {
-			return Grade.FONDA;
-		} else if (p.getName().equalsIgnoreCase("caluce")) {
-			return Grade.FONDA;
-		} else if (p.getName().equalsIgnoreCase("d01t")) {
-			return Grade.HEROS;
-		} else {
-			return Grade.JOUEUR;
-		}
+		return Grade.get(p).getChatColor() + p.getName();
 	}
 
 	public static void boost(Player player, int i) {
@@ -132,6 +140,52 @@ public class BlueCore extends JavaPlugin {
 			return true;
 		}
 		return false;
+	}
+	
+	public static String readURL(String str) {
+        StringBuilder b = new StringBuilder();
+        String ret = null;
+		URL url;
+	    InputStream is = null;
+	    BufferedReader br;
+	    String line;
+
+	    try {
+	        url = new URL(str);
+	        is = url.openStream();  // throws an IOException
+	        br = new BufferedReader(new InputStreamReader(is));
+
+	        
+	        while ((line = br.readLine()) != null) {
+	        	b.append(line);
+	            b.append("\n");
+	        }
+	        ret = b.substring(0, b.length() - 1);
+	        return ret;
+	    } catch (MalformedURLException mue) {
+	         mue.printStackTrace();
+	    } catch (IOException ioe) {
+	         ioe.printStackTrace();
+	    } finally {
+	        try {
+	            if (is != null) is.close();
+	        } catch (IOException ioe) {
+	            // nothing to see here
+	        }
+	    }
+	    return ret;
+	}
+
+	public static String askAPI(String string, int timeout) {
+		if (apiCache.containsKey(string)) {
+			CacheEntry e = apiCache.get(string);
+			if (e.isStillValid(timeout)) {
+				return e.getResult();
+			}
+		}
+		String ret = readURL("http://survivormc.fr/api/" + string);
+		apiCache.put(string, new CacheEntry(ret));
+		return ret;
 	}
 	
 }

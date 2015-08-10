@@ -27,7 +27,7 @@ public class ChatManager implements Listener {
 				.then(" » ")
 					.color(ChatColor.GRAY)
 				.then(e.getMessage())
-					.color(BlueCore.getGrade(e.getPlayer()).isAtLeast(Grade.FONDA) ? ChatColor.WHITE : ChatColor.GRAY)
+					.color(Grade.get(e.getPlayer()).isAtLeast(Grade.FONDA) ? ChatColor.WHITE : ChatColor.GRAY)
 				.send(p);
 		}
 
