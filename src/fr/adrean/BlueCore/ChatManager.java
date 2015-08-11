@@ -12,9 +12,11 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class ChatManager implements Listener {
@@ -23,7 +25,7 @@ public class ChatManager implements Listener {
 	public void onPlayerChat(AsyncPlayerChatEvent e) {
 		e.setCancelled(true);
 		for (Player p : Bukkit.getOnlinePlayers()) {
-			BlueCore.getFancyName(new FancyMessage(), e.getPlayer(), p)
+			BlueCore.getFancyName(new FancyMessage(), e.getPlayer(), p, true)
 				.then(" » ")
 					.color(ChatColor.GRAY)
 				.then(e.getMessage())
@@ -44,7 +46,7 @@ public class ChatManager implements Listener {
 				for (Player watcher : Bukkit.getOnlinePlayers()) {
 					try {
 						FancyMessage msg;
-						FancyMessage pname = BlueCore.getFancyName(new FancyMessage(), p, watcher);
+						FancyMessage pname = BlueCore.getFancyName(new FancyMessage(), p, watcher, true);
 						FancyMessage defaultmsg = pname.clone().then(" est mort").color(ChatColor.YELLOW);
 						if (edmc.equals(DamageCause.BLOCK_EXPLOSION)) {
 							msg = pname.clone().then(" a explosé").color(ChatColor.YELLOW);
@@ -59,7 +61,7 @@ public class ChatManager implements Listener {
 								EntityDamageByEntityEvent edbee = (EntityDamageByEntityEvent) edme;
 								if (edbee.getDamager() instanceof Player) {
 									Player damager = (Player) edbee.getDamager();
-									msg = BlueCore.getFancyName(pname.clone().then(" a été tué par ").color(ChatColor.YELLOW), damager, watcher);
+									msg = BlueCore.getFancyName(pname.clone().then(" a été tué par ").color(ChatColor.YELLOW), damager, watcher, true);
 								} else {
 									msg = pname.clone().then(" a été tué par un ").color(ChatColor.YELLOW).then(edbee.getDamager().getName()).color(ChatColor.RED);
 								}
@@ -108,6 +110,30 @@ public class ChatManager implements Listener {
 			}
 		}.run();
 		e.setDeathMessage(null);
+	}
+
+	@EventHandler
+	public void onPlayerJoin(PlayerJoinEvent e) throws CloneNotSupportedException {
+		Player player = e.getPlayer();
+		FancyMessage msg = new FancyMessage("[").color(ChatColor.DARK_GRAY)
+				.then("+").color(ChatColor.GREEN)
+				.then("] ").color(ChatColor.DARK_GRAY);
+		for (Player p : Bukkit.getOnlinePlayers()) {
+			BlueCore.getFancyName(msg.clone(), player, p, false).send(p);
+		}
+		e.setJoinMessage(null);
+	}
+	
+	@EventHandler
+	public void onPlayerQuit(PlayerQuitEvent e) throws CloneNotSupportedException {
+		Player player = e.getPlayer();
+		FancyMessage msg = new FancyMessage("[").color(ChatColor.DARK_GRAY)
+				.then("-").color(ChatColor.RED)
+				.then("] ").color(ChatColor.DARK_GRAY);
+		for (Player p : Bukkit.getOnlinePlayers()) {
+			BlueCore.getFancyName(msg.clone(), player, p, false).send(p);
+		}
+		e.setQuitMessage(null);
 	}
 	
 }

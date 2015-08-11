@@ -7,20 +7,24 @@ import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 
 public enum Grade {
-	ADMIN(ChatColor.RED, 1200),
-	FONDA(ChatColor.RED, 1000),
-	STAFF(ChatColor.RED, 800),
-	LEGENDAIRE(ChatColor.AQUA, 40),
-	DIVIN(ChatColor.YELLOW, 30),
-	HEROS(ChatColor.GREEN, 20),
-	JOUEUR(ChatColor.GRAY, 10);
+	MANAGER(ChatColor.RED, 1400, "Manager"),
+	ADMIN(ChatColor.RED, 1200, "Administrateur"),
+	FONDA(ChatColor.RED, 1000, "Fondateur"),
+	STAFF(ChatColor.RED, 800, "Staff"),
+	ARCHITECTE(ChatColor.DARK_GREEN, 250, "Architecte"),
+	LEGENDAIRE(ChatColor.AQUA, 40, "Légendaire"),
+	DIVIN(ChatColor.YELLOW, 30, "Divin"),
+	HEROS(ChatColor.GREEN, 20, "§e[§7*§aHéros§7*§e]"),
+	JOUEUR(ChatColor.GRAY, 10, "Joueur");
 	
 	private ChatColor chatColor;
 	private int level;
+	private String prefix;
 	
-	Grade(ChatColor c, int level) {
+	Grade(ChatColor c, int level, String name) {
 		chatColor = c;
 		this.level = level;
+		this.prefix = name;
 	}
 	
 	public static Grade getByID(int id) {
@@ -42,6 +46,10 @@ public enum Grade {
 	
 	public ChatColor getChatColor() {
 		return chatColor;
+	}
+	
+	public String getPrefix() {
+		return this.prefix;
 	}
 	
 	public int getLevel() {

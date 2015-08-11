@@ -77,12 +77,15 @@ public class BlueCore extends JavaPlugin {
 		
 	}
 
-	public static FancyMessage getFancyName(FancyMessage msg, OfflinePlayer p, Player watcher) {
+	public static FancyMessage getFancyName(FancyMessage msg, OfflinePlayer p, Player watcher, boolean everything) {
 		if (msg.latest().hasText()) msg = msg.then();
 		Grade grade = Grade.get(p);
 		ChatColor color = grade.getChatColor();
-		if (Bukkit.getPluginManager().isPluginEnabled("Factions")) {
+		if (everything && Bukkit.getPluginManager().isPluginEnabled("Factions")) {
 			msg = FactionsHelper.getFancyFactionBeforeName(msg, p, watcher);
+		}
+		if (everything) {
+			msg = msg.text(grade.getPrefix() + " ").then();
 		}
 		msg = msg.text(p.getName())
 				.color(color)
