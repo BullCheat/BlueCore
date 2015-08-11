@@ -1,0 +1,6 @@
+name: BlueCore
+main: fr.adrean.BlueCore.BlueCore
+version: 0.1
+author: Thecrafteur75
+description: BlueCore, plugin principal
+softdepend: [Factions]
