@@ -25,11 +25,12 @@ public class ChatManager implements Listener {
 	public void onPlayerChat(AsyncPlayerChatEvent e) {
 		e.setCancelled(true);
 		for (Player p : Bukkit.getOnlinePlayers()) {
+			Grade g = Grade.get(e.getPlayer());
 			BlueCore.getFancyName(new FancyMessage(), e.getPlayer(), p, true)
 				.then(" » ")
 					.color(ChatColor.GRAY)
 				.then(e.getMessage())
-					.color(Grade.get(e.getPlayer()).isAtLeast(Grade.FONDA) ? ChatColor.WHITE : ChatColor.GRAY)
+					.color(g.isAtLeast(Grade.FONDA) ? ChatColor.YELLOW : g.isAtLeast(Grade.STAFF) ? ChatColor.WHITE : ChatColor.GRAY)
 				.send(p);
 		}
 

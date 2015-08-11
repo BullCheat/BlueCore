@@ -78,6 +78,12 @@ public class BlueCore extends JavaPlugin {
 	}
 
 	public static FancyMessage getFancyName(FancyMessage msg, OfflinePlayer p, Player watcher, boolean everything) {
+		try {
+			if (Bukkit.isPrimaryThread())
+			throw new IllegalStateException("ATTENTION -- Utilisation de getFancyName en sync -- Risque de lags !!");
+		} catch (IllegalStateException e) {
+			e.printStackTrace();
+		}
 		if (msg.latest().hasText()) msg = msg.then();
 		Grade grade = Grade.get(p);
 		ChatColor color = grade.getChatColor();
@@ -85,11 +91,11 @@ public class BlueCore extends JavaPlugin {
 			msg = FactionsHelper.getFancyFactionBeforeName(msg, p, watcher);
 		}
 		if (everything) {
-			msg = msg.text(grade.getPrefix() + " ").then();
+			msg = msg.text("[").color(ChatColor.YELLOW).then(grade.getPrefix()).color(color).then("]").color(ChatColor.YELLOW).then(" ").then();
 		}
 		msg = msg.text(p.getName())
 				.color(color)
-				.tooltip(color + p.getName(),
+				.tooltip(color + (everything ? p.getName() : grade.getPrefix()) ,
 					"§6Joueurs tués : §b" + 1,
 					"§6Nombre de morts : §b" + 12)
 					.suggest("/msg " + p.getName() + " ");

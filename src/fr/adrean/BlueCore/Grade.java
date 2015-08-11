@@ -7,14 +7,15 @@ import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 
 public enum Grade {
-	MANAGER(ChatColor.RED, 1400, "Manager"),
-	ADMIN(ChatColor.RED, 1200, "Administrateur"),
+	MANAGER(ChatColor.DARK_RED, 1400, "Manager"),
+	ADMIN(ChatColor.DARK_RED, 1200, "Administrateur"),
 	FONDA(ChatColor.RED, 1000, "Fondateur"),
-	STAFF(ChatColor.RED, 800, "Staff"),
+	STAFF(ChatColor.YELLOW, 800, "Staff"),
+	GUIDE(ChatColor.BLUE, 500, "Guide"),
 	ARCHITECTE(ChatColor.DARK_GREEN, 250, "Architecte"),
 	LEGENDAIRE(ChatColor.AQUA, 40, "Légendaire"),
-	DIVIN(ChatColor.YELLOW, 30, "Divin"),
-	HEROS(ChatColor.GREEN, 20, "§e[§7*§aHéros§7*§e]"),
+	DIVIN(ChatColor.GOLD, 30, "Divin"),
+	HEROS(ChatColor.GREEN, 20, "Héros"),
 	JOUEUR(ChatColor.GRAY, 10, "Joueur");
 	
 	private ChatColor chatColor;
